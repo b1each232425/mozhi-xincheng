@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  /* 定义“墨心纸城”专属色板 */
+  --color-moxin-paper: #FBFBF2;
+  --color-moxin-ink: #2C2C2C;
+  --color-moxin-shazhu: #B22222;
+  --color-moxin-border: #E0DDD5;
+  
+  /* 定义衬线字体 */
+  --font-serif: "Noto Serif SC", "STSong", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-moxin-paper text-moxin-ink antialiased;
+  }
+}
