@@ -1,80 +1,140 @@
 <template>
-  <main class="max-w-2xl mx-auto py-8 md:py-16">
-    <section 
-      class="bg-white p-8 md:p-12 shadow-moxin-soft border border-moxin-border rounded-sm relative overflow-hidden transition-all duration-600 hover:shadow-md"
-    >
-      <div class="absolute top-0 right-8 w-px h-12 bg-moxin-shazhu opacity-20"></div>
-
-      <div v-if="loading" class="animate-pulse space-y-4">
-        <div class="h-6 bg-gray-100 w-3/4"></div>
-        <div class="h-6 bg-gray-100 w-1/2"></div>
-      </div>
-
-      <div v-else class="space-y-12">
-        <article class="relative">
-          <span class="absolute -left-4 -top-2 text-4xl opacity-10 font-serif">“</span>
-          <p class="text-2xl md:text-3xl leading-relaxed tracking-wide py-4">
-            {{ dailySentence.content }}
-          </p>
-          <span class="absolute -right-2 -bottom-4 text-4xl opacity-10 font-serif">”</span>
-        </article>
-
-        <div class="flex justify-end items-center space-x-2 text-sm md:text-base opacity-70">
-          <span class="w-8 h-px bg-moxin-ink opacity-30"></span>
-          <span>{{ dailySentence.author }}</span>
-          <span v-if="dailySentence.source" class="before:content-['《'] after:content-['》']">
-            {{ dailySentence.source }}
+  <div class="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
+   
+    <section class="h-screen w-full flex flex-col items-center justify-center snap-start bg-moxin-paper relative">
+       <MoxinVFX :density="70" class="absolute inset-0 z-10 vfx-mask"/>
+       <!-- <div class="z-20 mb-8 w-full max-w-xl overflow-x-auto no-scrollbar px-4 flex space-x-6 items-center border-b border-moxin-shazhu/10 pb-4">
+        <div 
+          v-for="dateItem in dateRange" 
+          :key="dateItem.full"
+          @click="handleDateChange(dateItem.full)"
+          class="flex-shrink-0 cursor-pointer transition-all duration-300 flex flex-col items-center"
+          :class="selectedDate === dateItem.full ? 'scale-110' : 'opacity-30 hover:opacity-60'"
+        >
+          <span class="text-[10px] font-mono text-moxin-ink">{{ dateItem.year }}</span>
+          <span class="text-lg font-serif text-moxin-ink font-bold" :class="selectedDate === dateItem.full ? 'text-moxin-shazhu' : ''">
+            {{ dateItem.display }}
           </span>
         </div>
+      </div> -->
+      <div class="max-w-3xl w-full px-6">
+        <SentenceCard 
+    :sentence="dailySentence" 
+    :loading="loading"
+    :date-range="dateRange"       :model-value="selectedDate"   @update:selected-date="handleDateChange" >
+          <template #actions>
+            <button @click="handleToggleLike" :class="isLiked ? 'text-moxin-shazhu' : ''">
+              {{ isLiked ? '♥ 已藏' : '♡ 收藏' }}
+            </button>
+          </template>
+          <template #date>{{ currentDate }}</template>
+        </SentenceCard>
       </div>
+      
+      <p class="mt-12 text-sm opacity-40 tracking-widest text-moxin-ink">
+        素纸一张，写尽心城
+      </p>
 
-      <footer class="mt-16 flex items-center justify-between border-t border-moxin-border pt-6">
-        <div class="flex space-x-6">
-          <button 
-            @click="handleToggleLike" 
-            class="group flex items-center space-x-1 transition-colors"
-            :class="isLiked ? 'text-moxin-shazhu' : 'hover:text-moxin-shazhu'"
-          >
-            <span class="text-xl">{{ isLiked ? '♥' : '♡' }}</span>
-            <span class="text-xs tracking-tighter uppercase">{{ isLiked ? '已藏' : '收藏' }}</span>
-          </button>
-          
-          <button class="flex items-center space-x-1 hover:text-moxin-ink opacity-60 hover:opacity-100 transition-all">
-            <span class="text-lg">♞</span>
-            <span class="text-xs tracking-tighter uppercase">生成海报</span>
-          </button>
-        </div>
-
-        <div class="text-[10px] opacity-30 tracking-widest text-moxin-ink">
-          {{ currentDate }}
-        </div>
-      </footer>
+      <div class="absolute bottom-10 animate-bounce opacity-20">
+        <span class="text-4xl">↓</span>
+      </div>
     </section>
 
-    <p class="text-center mt-12 text-xs opacity-30 tracking-widest">
-      素纸一张，写尽心城
-    </p>
-  </main>
+    <section 
+      ref="secondSection"
+      class="h-screen w-full flex items-center justify-center snap-start relative shadow-inner overflow-hidden"
+    >
+      <div 
+        class="absolute inset-0 transition-all duration-1000 ease-in-out"
+        :class="isSecondSectionActive ? 'blur-sm scale-105' : 'blur-0 scale-100'"
+        :style="{ 
+          backgroundImage: `url(${tableBg})`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center' 
+        }"
+      >
+        <div class="absolute inset-0 bg-black/20"></div>
+      </div>
+      
+      <div 
+        class="max-w-3xl w-full px-6 z-10 transition-all duration-1000 delay-500 ease-out"
+        :class="[
+          isSecondSectionActive 
+            ? 'opacity-100 translate-y-0 scale-100' 
+            : 'opacity-0 translate-y-12 scale-95'
+        ]"
+      >
+        <HitokotoCard :Hitokoto="dailyHitokoto" :loading="loading" />
+      </div>
+    </section>
+
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { getDailySentence } from '../../utils/api/api'; // 引入封装好的逻辑
+import { ref, onMounted, computed,onUnmounted } from 'vue';
+import { getDailySentence, getDailyHitokoto } from '../../utils/api/api';
+import SentenceCard from '../components/SentenceCard.vue';
+import HitokotoCard from '../components/HitokotoCard.vue';
+
+// 💡 导入你放在 assets 里的贴图
+import tableBg from '../assets/seelean-iRJH2lSvo_E-unsplash.jpg';
+import MoxinVFX from '../components/MoxinVFX.vue'; // 引入特效组件
 const loading = ref(true);
 const isLiked = ref(false);
 const dailySentence = ref({ content: '', author: '', source: '' });
+const dailyHitokoto = ref({ hitokoto: '', from: '', from_who: '' });
+const secondSection = ref(null); // 💡 必须定义，否则 observer 找不到目标
+const isSecondSectionActive = ref(false);
+let observer = null;
 
-// 计算当前日期（逻辑保持不变）
+
 const currentDate = computed(() => {
   const date = new Date();
   return `${date.getFullYear()} / ${date.getMonth() + 1} / ${date.getDate()}`;
 });
 
-// 核心逻辑：现在只需调用封装好的 API
+const selectedDate = ref(new Date().toISOString().split('T')[0]); // 默认今天
+
+// 💡 修改：让日期范围基于 selectedDate 动态计算
+const dateRange = computed(() => {
+  const dates = [];
+  const baseDate = new Date(selectedDate.value); // 以当前选中日期为基准
+  
+  // 生成以选中日期为中心的 14 天（前 7 天 到 后 6 天）
+  // 这样用户往左点，范围就往左移；往右点，范围就往右移
+  for (let i = -7; i < 7; i++) {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + i);
+    dates.push({
+      full: d.toISOString().split('T')[0],
+      year: d.getFullYear(),
+      display: `${d.getMonth() + 1}/${d.getDate()}`
+    });
+  }
+  // 如果你希望始终包含今天，或者有特定的排序逻辑，可以对 dates 进行 sort
+  return dates;
+});
+
+const handleDateChange = (date) => {
+  selectedDate.value = date; // 更新选中日期，触发 dateRange 重新计算
+  loadData(); 
+};
+
 const loadData = async () => {
   loading.value = true;
-  dailySentence.value = await getDailySentence();
-  loading.value = false;
+  try {
+    const [sentence, Hitokoto] = await Promise.all([
+      getDailySentence(),
+      getDailyHitokoto()
+    ]);
+    dailySentence.value = sentence;
+    dailyHitokoto.value = Hitokoto;
+  } catch (error) {
+    console.error("加载失败", error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const handleToggleLike = () => {
@@ -83,5 +143,44 @@ const handleToggleLike = () => {
 
 onMounted(() => {
   loadData();
+observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      // 当第二幕进入视口超过 50% 时触发动画
+      if (entry.isIntersecting) {
+        isSecondSectionActive.value = true;
+      } else {
+        // 如果想往回滑时重置动画，可以取消下面注释
+        // isSecondSectionActive.value = false;
+      }
+    });
+  }, { threshold: 0.5 });
+
+  if (secondSection.value) {
+    observer.observe(secondSection.value);
+  }
+});
+
+onUnmounted(() => {
+  if (observer) observer.disconnect();
 });
 </script>
+
+<style scoped>
+/* 隐藏滚动条，保持页面整洁 */
+.h-screen::-webkit-scrollbar {
+  display: none;
+}
+.h-screen {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.vfx-mask {
+  /* polygon 的逻辑是：先画外圈大矩形，再画内圈小矩形（卡片位置） */
+  /* 这里的百分比需要根据你卡片在屏幕上的实际占比进行微调 */
+  clip-path: polygon(
+    0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 
+    20% 30%, 80% 30%, 80% 70%, 20% 70%, 20% 30%
+  );
+}
+</style>

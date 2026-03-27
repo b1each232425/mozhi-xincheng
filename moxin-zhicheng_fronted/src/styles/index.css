@@ -6,7 +6,7 @@
   --color-moxin-ink: #2C2C2C;
   --color-moxin-shazhu: #B22222;
   --color-moxin-border: #E0DDD5;
-  
+  --color-moxin-maple: #D2691E; /* 秋季限定的枫叶色 */
   /* 定义衬线字体 */
   --font-serif: "Noto Serif SC", "STSong", serif;
 }

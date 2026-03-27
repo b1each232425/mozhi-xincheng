@@ -1,23 +1,5 @@
 // src/utils/api.js
 
-/**
- * 自动将诗词存入本地存储，用于未来数据迁移和离线显示
- */
-const saveToLocal = (sentence) => {
-  try {
-    const history = JSON.parse(localStorage.getItem('moxin_history') || '[]');
-    // 简单去重：如果内容不重复则存入
-    if (!history.find(item => item.content === sentence.content)) {
-      history.push({
-        ...sentence,
-        savedAt: new Date().toISOString()
-      });
-      localStorage.setItem('moxin_history', JSON.stringify(history));
-    }
-  } catch (e) {
-    console.error("本地存储失败", e);
-  }
-};
 
 /**
  * 获取每日诗词
@@ -38,7 +20,6 @@ export const getDailySentence = async () => {
     };
 
     // 执行你的“积累”计划：存入本地
-    saveToLocal(sentence);
     
     return sentence;
   } catch (error) {
@@ -49,5 +30,17 @@ export const getDailySentence = async () => {
       author: "苏轼",
       source: "临江仙·送钱穆父"
     };
+  }
+};
+
+// 获取随机短文
+export const getDailyHitokoto = async () => {
+  try {
+    // 这里以一言的“文学”和“诗词”分类为例
+    const res = await fetch('https://v1.hitokoto.cn/?c=d&c=i');
+    const data = await res.json();
+    return data; 
+  } catch (e) {
+    return "此时无声，唯笔尖游走。"; // 降级兜底
   }
 };
