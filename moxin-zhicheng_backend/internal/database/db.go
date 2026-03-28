@@ -54,7 +54,10 @@ func InitDB() {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	DB = db
-	err = DB.AutoMigrate(&model.Poetry{})
+	err = DB.AutoMigrate(
+		&model.Poetry{},
+		&model.PoetryTag{},
+		&model.PoetryTagRelation{})
 	if err != nil {
 		logger.Error("数据库自动迁移失败", err)
 		panic(err)

@@ -16,6 +16,25 @@ const routes = [
       },
       // 后续可以在这里继续添加 ExploreView 等
     ]
+  },
+  {
+    path: '/Chenxiang',
+    component:Layout,
+    // name: 'ChenXiang',
+    children: [{
+      path: '',
+      component: () => import('../views/chenxiang/ChenXiangView.vue')
+    },
+  {
+    path:'List',
+    name: 'ChenXiangList',
+    component: () => import('../views/chenxiang/ChenXiangList.vue')
+  },
+  {
+    path:'Poet/:id',   
+    name: 'ChenXiangPoet',
+    component: () => import('../views/chenxiang/ChenXiangPoet.vue')
+  }]
   }
 ];
 

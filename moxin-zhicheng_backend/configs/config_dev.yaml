@@ -5,3 +5,9 @@ database:
   user: "root"
   password: "1164657389abc"
   dbname: "moxin-zhicheng"
+
+redis:
+  host: "127.0.0.1"
+  port: "6535"
+  password: "1164657389abc" # 如果本地没设置密码就留空
+  db: 0        # 默认数据库
