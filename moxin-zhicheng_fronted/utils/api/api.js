@@ -1,5 +1,5 @@
 // src/utils/api.js
-
+const BASE_URL = 'http://localhost:8080'; // 后端地址，未来更换为 Go 后端只需修改此处
 
 /**
  * 获取每日诗词
@@ -42,5 +42,44 @@ export const getDailyHitokoto = async () => {
     return data; 
   } catch (e) {
     return "此时无声，唯笔尖游走。"; // 降级兜底
+  }
+};
+
+export const getPoetryList = async (keyword, page = 1, pageSize = 10) => {
+  try {
+    // 必须手动拼接查询字符串
+    const url = `${BASE_URL}/chenxiang/list?keyword=${encodeURIComponent(keyword)}&page=${page}&page_size=${pageSize}`;
+    
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!res.ok) throw new Error('网络响应错误');
+    
+    const data = await res.json(); // 解析 JSON
+    return data; // 返回给组件处理
+  } catch (err) {
+    console.error("检索失败:", err);
+    return { code: 500, data: [] };
+  }
+};
+
+export const getStars = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/chenxiang/starTags`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error('网络响应错误');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("获取功能星失败:", err);
+    return { code: 500, data: [] };
   }
 };
