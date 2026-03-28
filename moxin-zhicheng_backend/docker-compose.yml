@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库容器
+  mysql-db:
+    image: mysql:8.0
+    container_name: moxin-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "1164657389abc"
+      MYSQL_DATABASE: "moxin-zhicheng"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d # 自动初始化数据库脚本
+    networks:
+      - moxin-network
+
+  redis-cache:
+    image: redis:7.0-alpine
+    container_name: moxin-redis
+    restart: always
+    # 移除所有注释，确保每一行只有一个参数
+    command:
+      - redis-server
+      - --requirepass
+      - "1164657389abc"
+      - --appendonly
+      - "yes"
+      - --aof-use-rdb-preamble
+      - "yes"
+      - --appendfsync
+      - everysec
+    ports:
+      - "6535:6379"
+    volumes:
+      - ./docker/redis/data:/data
+    networks:
+      - moxin-network
+
+networks:
+  moxin-network:
+    driver: bridge

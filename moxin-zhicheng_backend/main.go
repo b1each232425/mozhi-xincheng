@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/gin-contrib/pprof"
 	"log"
 	"moxin-zhicheng/internal/config"
 	"moxin-zhicheng/internal/database"
 	"moxin-zhicheng/internal/logger"
-	"net/http"
+	"moxin-zhicheng/internal/redis"
+	"moxin-zhicheng/routes"
+
+	"github.com/gin-contrib/pprof"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,13 +24,21 @@ func main() {
 	// gin.Default() 默认包含了 Logger 和 Recovery 中间件
 	r := gin.Default()
 	pprof.Register(r)
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Token")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
+	redis.InitRedis()
+	defer redis.CloseRedis()
+	routes.SetupRoutes(r)
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("服务器启动失败：%v", err)
 	}
-	// 4. 定义一个简单的测试接口
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+
 }
