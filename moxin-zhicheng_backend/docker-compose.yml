@@ -33,11 +33,25 @@ services:
       - --appendfsync
       - everysec
     ports:
-      - "6535:6379"
+      - "6422:6379"
     volumes:
       - ./docker/redis/data:/data
     networks:
       - moxin-network
+
+  # Qdrant 向量数据库 (新增加)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: moxin-qdrant
+    restart: always
+    ports:
+      - "6423:6333" # HTTP API & Dashboard
+      - "6424:6334" # gRPC API (Go SDK 推荐)
+    volumes:
+      - ./docker/qdrant/storage:/qdrant/storage
+    networks:
+      - moxin-network
+
 
 networks:
   moxin-network:

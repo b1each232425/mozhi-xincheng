@@ -24,6 +24,12 @@ type Poetry struct {
 
 	// Rhythmic 词牌名
 	Rhythmic string `gorm:"type:varchar(32);comment:词牌名"`
+
+	// Translation 译文，存储爬取到的译文数据
+	Translation string `gorm:"type:text;comment:译文"`
+
+	// Annotation 注释，存储爬取到的注释数据
+	Annotation string `gorm:"type:text;comment:注释"`
 }
 
 // TableName 指定表名（可选，不指定默认是 poetries）
