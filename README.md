@@ -15,6 +15,12 @@
 - 📱 **响应式设计**：完美适配桌面、平板、移动设备
 
 
+### 项目截图 
+
+<img width="2369" height="1243" alt="image" src="https://github.com/user-attachments/assets/f3c50a97-000c-43f1-ac73-3c4352d52284" />
+<img width="2369" height="1243" alt="image" src="https://github.com/user-attachments/assets/357b1057-e268-4e4a-b92c-e11046f05035" />
+
+
 ## 📁 项目结构
 
 ```
@@ -124,7 +130,18 @@ go run textrank.go
 # ✅ 任务全部完成！
 ```
 
-#### 步骤 5：启动后端服务
+#### 步骤 5：初始化Qdrant，爬取古诗文网译文和注解数据
+cd script
+go run init_qdrant.go(需要docker运行)
+go run crawler.go
+
+#### 步骤 6：构建知识库，AI补全其余诗歌的译文
+cd script
+go run sync_vector.go
+go run ai_annotation.go
+
+
+#### 启动后端服务
 ```bash
 # 回到项目根目录
 cd ..
