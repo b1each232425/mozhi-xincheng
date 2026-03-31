@@ -1,67 +1,71 @@
 <template>
- <div class="relative w-full max-w-6xl mx-auto pt-32 pb-24 px-8 md:px-16 bg-[#C21F31] rounded-2xl shadow-[10px_10px_40px_rgba(0,0,0,0.05)] border border-moxin-border/20">
+  <div class="relative w-full max-w-5xl mx-auto pt-32 pb-24 px-6 md:px-12 bg-[#8c222c] rounded-xl shadow-2xl border border-white/10 font-['KaiTi','楷体','serif']">
     
-    <div class="absolute top-10 left-10 md:left-16 z-30 flex space-x-6 items-center overflow-x-auto no-scrollbar max-w-[80%] pb-2">
+    <div class="absolute top-8 left-8 md:left-12 z-30 flex space-x-8 items-center overflow-x-auto no-scrollbar max-w-[85%] pb-4 mask-fade-edges">
       <div 
         v-for="dateItem in dateRange" 
         :key="dateItem.full"
         @click="$emit('update:selectedDate', dateItem.full)" 
-        class="flex-shrink-0 cursor-pointer transition-all duration-300 flex flex-col items-center"
-        :class="modelValue === dateItem.full ? 'scale-110' : 'opacity-30 hover:opacity-60'"
+        class="flex-shrink-0 cursor-pointer transition-all duration-500 flex flex-col items-center group"
+        :class="modelValue === dateItem.full ? 'scale-110' : 'opacity-40 hover:opacity-80'"
       >
-        <span class="text-[10px] font-mono text-moxin-ink">{{ dateItem.year }}</span>
-        <span class="text-lg font-serif text-moxin-ink font-bold" :class="modelValue === dateItem.full ? 'text-moxin-shazhu' : ''">
+        <span class="text-[10px] font-mono text-white/60 tracking-widest mb-1 transition-colors">
+          {{ dateItem.year }}
+        </span>
+        <span 
+          class="text-xl font-bold transition-all duration-300" 
+          :class="modelValue === dateItem.full ? 'text-[#f6f4ec] drop-shadow-md' : 'text-white/70'"
+        >
           {{ dateItem.display }}
         </span>
+        <div 
+          v-if="modelValue === dateItem.full" 
+          class="w-1.5 h-1.5 bg-[#d4af37] rounded-full mt-2 shadow-[0_0_8px_#d4af37]"
+        ></div>
       </div>
     </div>
 
-    <div class="absolute top-0 left-0 w-full flex justify-around px-20 -translate-y-1/2 z-40">
-       </div>
+    <section class="bg-[#f8f6f0] p-10 md:p-20 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-sm relative overflow-hidden transition-all duration-500">
+      
+      <div class="absolute top-0 right-12 w-[1px] h-24 bg-[#a63838] opacity-30"></div>
 
-    <section 
-      class="bg-white p-10 md:p-16 shadow-moxin-soft border border-moxin-border/50 rounded-sm relative overflow-hidden transition-all duration-600 hover:shadow-md"
-    >
-      <div class="absolute top-0 right-10 w-px h-16 bg-moxin-shazhu opacity-20"></div>
-
-      <div v-if="loading" class="animate-pulse space-y-6">
+      <div v-if="loading" class="animate-pulse space-y-8">
         <slot name="loading">
-          <div class="h-8 bg-gray-100 w-3/4 rounded-sm"></div>
-          <div class="h-8 bg-gray-100 w-1/2 rounded-sm"></div>
+          <div class="h-6 bg-[#e0dcd0] w-3/4 rounded-sm opacity-50"></div>
+          <div class="h-6 bg-[#e0dcd0] w-1/2 rounded-sm opacity-50"></div>
         </slot>
       </div>
 
-      <div v-else class="space-y-16">
-        <article class="relative">
-          <span class="absolute -left-6 -top-4 text-5xl opacity-10 font-serif">“</span>
-          <p class="text-2xl md:text-4xl leading-relaxed tracking-wide py-6 text-moxin-ink/90 font-serif">
+      <div v-else class="space-y-16 mt-4">
+        <article class="relative px-8 md:px-12">
+          <span class="absolute left-0 -top-8 text-7xl text-[#a63838] opacity-15 font-serif leading-none">“</span>
+          <p class="text-2xl md:text-[28px] leading-[2.2] tracking-[4px] text-[#2b2b2b] text-justify relative z-10">
             {{ sentence.content }}
           </p>
-          <span class="absolute -right-4 -bottom-6 text-5xl opacity-10 font-serif">”</span>
+          <span class="absolute right-0 -bottom-12 text-7xl text-[#a63838] opacity-15 font-serif leading-none">”</span>
         </article>
 
-        <div class="flex justify-end items-center space-x-3 text-base md:text-xl opacity-70">
-          <span class="w-10 h-px bg-moxin-ink opacity-30"></span>
-          <span class="font-serif">{{ sentence.author }}</span>
-          <span v-if="sentence.source" class="font-serif before:content-['《'] after:content-['》']">
+        <div class="flex justify-end items-center space-x-4 text-lg md:text-xl text-[#5c554b]">
+          <span class="w-12 h-[1px] bg-[#5c554b] opacity-40"></span>
+          <span class="tracking-[2px]">{{ sentence.author }}</span>
+          <span v-if="sentence.source" class="tracking-[2px] before:content-['《'] after:content-['》'] text-[#8c222c]">
             {{ sentence.source }}
           </span>
         </div>
       </div>
 
-      <footer class="mt-20 flex items-center justify-between border-t border-moxin-border/40 pt-8">
-        <div class="flex space-x-8 scale-110 origin-left">
+      <footer class="mt-24 flex items-center justify-between border-t border-[#d3cbba] pt-8">
+        <div class="flex space-x-6">
           <slot name="actions"></slot>
         </div>
-
-        <div class="text-xs opacity-20 tracking-widest text-moxin-ink font-mono uppercase">
+        <div class="text-[10px] opacity-40 tracking-[0.3em] text-[#2b2b2b] font-mono uppercase">
           Daily Inspiration
         </div>
       </footer>
     </section>
 
-    <div class="absolute bottom-8 left-16 opacity-10 text-[10px] font-serif tracking-[0.5em] uppercase">
-      Moxin Calendar Project / Est. 2026
+    <div class="absolute bottom-6 left-12 opacity-20 text-[10px] text-white/50 tracking-[0.4em] uppercase font-mono">
+      Moxin Project · Est. 2026
     </div>
   </div>
 </template>
@@ -78,18 +82,21 @@ defineProps({
     default: false
   },
   modelValue: String, 
-  // 💡 新增：接收可选日期列表
   dateRange: Array
 });
 defineEmits(['update:selectedDate']);
 </script>
 
 <style scoped>
-/* 保持纯净的平面质感，取消变换 */
-div {
-  transition: all 0.5s ease;
-}
+@import "tailwindcss";
 
+/* 隐藏滚动条但保留滚动功能 */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* 为日期横向滚动条添加两端渐变遮罩，使其融入背景 */
+.mask-fade-edges {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
 </style>

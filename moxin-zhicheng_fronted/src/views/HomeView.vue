@@ -35,9 +35,9 @@
         素纸一张，写尽心城
       </p>
 
-      <div class="absolute bottom-10 animate-bounce opacity-20">
-        <span class="text-4xl">↓</span>
-      </div>
+      <!-- <div class="absolute bottom-10 animate-bounce opacity-20">
+        <span class="text-2xl">↓</span>
+      </div> -->
     </section>
 
     <section 

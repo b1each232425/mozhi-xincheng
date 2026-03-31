@@ -83,3 +83,69 @@ export const getStars = async () => {
     return { code: 500, data: [] };
   }
 };
+
+export const getPoemDetail = async (id) => {
+  try {
+    const res = await fetch(`${BASE_URL}/chenxiang/singlePoem/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error('网络响应错误');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("获取诗词详情失败:", err);
+    return { code: 500, data: {} };
+  }
+};
+
+export const getLuoBiList = async (page = 1, pageSize = 10) => {
+  try{
+    const res = await fetch(`${BASE_URL}/luobi/articles?page=${page}&page_size=${pageSize}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'}});
+    if (!res.ok) throw new Error('网络响应错误');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("获取落笔列表失败:", err);
+    return { code: 500, data: [] };
+}}
+
+export const createLuoBiArticle = async (articleData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/luobi/article`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(articleData)
+    });
+    if (!res.ok) throw new Error('网络响应错误');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("创建落笔文章失败:", err);
+    return { code: 500, data: {} };
+  }
+};
+
+export const getLuoBiArticle = async (id) => {
+  try {
+    const res = await fetch(`${BASE_URL}/luobi/article/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error('网络响应错误');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("获取落笔文章失败:", err);
+    return { code: 500, data: {} };
+  }
+};

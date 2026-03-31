@@ -168,3 +168,7 @@ onUnmounted(() => {
   cancelAnimationFrame(animationId);
 });
 </script>
+
+<style scoped>
+@import "tailwindcss";
+</style>
