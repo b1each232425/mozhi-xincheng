@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly/v2"
-	"github.com/gocolly/colly/v2/extensions"
 	"math/rand"
 	"moxin-zhicheng/internal/config"
 	"moxin-zhicheng/internal/database"
@@ -14,6 +11,10 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gocolly/colly/v2"
+	"github.com/gocolly/colly/v2/extensions"
 )
 
 //type PoetryData struct {
@@ -92,7 +93,7 @@ func ScrapeGushiwen(title, author string) (*model.Poetry, error) {
 
 	// 统一设置 Header
 	c.OnRequest(func(r *colly.Request) {
-		r.Headers.Set("Cookie", "login=flase; ticketStr=205109234%7cgQGU8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyTi1rQ1FfbGVkN2kxT3B2TGhGMUcAAgSZksdpAwQAjScA; wxopenid=oVc5H0sNPp-AR7TsWBdvnw2QwWjw; Hm_lvt_9007fab6814e892d3020a64454da5a55=1773833062,1774157161,1774686861,1774694927; HMACCOUNT=523E7D76752CFD9F; Hm_lpvt_9007fab6814e892d3020a64454da5a55=1774695082; gsw2017user=7795777%7c6A5471B38CFFFF27880E4F7E9679CF7A537e2a7a%7c2000%2f1%2f1%7c2000%2f1%2f1; userPlay=7795777%7C0%7C0%7C2%7C1%7C0%7C0%7C1%7C0%7C0%7C0%7C0%7C0%7C0")
+		r.Headers.Set("Cookie", "login=flase; ASP.NET_SessionId=cu2rqtgidsix0aeb002xpull; ticketStr=207168910%7cgQHh7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAydXpISVJZbGVkN2kxVkh6T2hGMWgAAgRrFstpAwQAjScA; Hm_lvt_9007fab6814e892d3020a64454da5a55=1774765935,1774851130,1774917227; HMACCOUNT=20480A7A91B404B9; codeyz=eb3e46bfb1d37024; wxopenid=oVc5H0sNPp-AR7TsWBdvnw2QwWjw; Hm_lpvt_9007fab6814e892d3020a64454da5a55=1774917355; gsw2017user=7795777%7c6A5471B38CFFFF27880E4F7E9679CF7A537e2a7a%7c2000%2f1%2f1%7c2000%2f1%2f1; userPlay=7795777%7C0%7C0%7C1%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0")
 		//r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 		if strings.Contains(r.URL.String(), "ajax") {

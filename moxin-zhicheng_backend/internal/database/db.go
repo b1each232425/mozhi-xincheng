@@ -57,7 +57,8 @@ func InitDB() {
 	err = DB.AutoMigrate(
 		&model.Poetry{},
 		&model.PoetryTag{},
-		&model.PoetryTagRelation{})
+		&model.PoetryTagRelation{},
+		&model.Article{})
 	if err != nil {
 		logger.Error("数据库自动迁移失败", err)
 		panic(err)

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"moxin-zhicheng/internal/database"
 	model "moxin-zhicheng/internal/models"
 	"moxin-zhicheng/internal/redis"
@@ -121,4 +122,18 @@ func SearchPoetry(c *gin.Context) {
 			"size":  pageSize,
 		},
 	})
+}
+
+func SinglePoem(c *gin.Context) {
+	poem_id := c.Param("id")
+	if poem_id == "" {
+		c.JSON(http.StatusOK, gin.H{"error": "查询诗歌ID不能为空"})
+		return
+	}
+	db := database.DB
+	var poem model.Poetry
+	if err := db.Where("id = ?", poem_id).First(&poem).Error; err != nil {
+		fmt.Println("占位")
+	}
+	c.JSON(http.StatusOK, gin.H{"code": 200, "data": poem})
 }
