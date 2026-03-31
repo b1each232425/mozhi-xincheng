@@ -1,5 +1,6 @@
 <template>
-  <div class="relative w-full max-w-5xl mx-auto pt-32 pb-24 px-6 md:px-12 bg-[#8c222c] rounded-xl shadow-2xl border border-white/10 font-['KaiTi','楷体','serif']">
+  <div class="relative w-full max-w-5xl mx-auto pt-32 pb-24 px-6 md:px-12 rounded-xl shadow-2xl border border-white/10 font-['KaiTi','楷体','serif']"
+  :class="[currentTheme.bg, currentTheme.border]">
     
     <div class="absolute top-8 left-8 md:left-12 z-30 flex space-x-8 items-center overflow-x-auto no-scrollbar max-w-[85%] pb-4 mask-fade-edges">
       <div 
@@ -71,6 +72,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { getCurrentSeason } from '../../utils/season';
 defineProps({
   sentence: {
     type: Object,
@@ -85,6 +88,19 @@ defineProps({
   dateRange: Array
 });
 defineEmits(['update:selectedDate']);
+
+const seasonTheme = {
+  spring: { bg: 'bg-[#4a6d55]', border: 'border-white/20', accent: '#8da48f' }, // 春：森绿
+  summer: { bg: 'bg-[#1a4a6e]', border: 'border-white/10', accent: '#5da9ad' }, // 夏：深海蓝
+  autumn: { bg: 'bg-[#8c222c]', border: 'border-white/10', accent: '#d4af37' }, // 秋：原本的朱红
+  winter: { bg: 'bg-[#2c2e3a]', border: 'border-white/10', accent: '#a1a3a6' }  // 冬：玄青/冷灰
+};
+
+// 2. 获取当前季节主题
+const currentTheme = computed(() => {
+  const season = getCurrentSeason();
+  return seasonTheme[season] || seasonTheme.autumn; // 默认回退到红色
+});
 </script>
 
 <style scoped>

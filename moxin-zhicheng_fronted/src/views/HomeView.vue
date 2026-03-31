@@ -2,7 +2,11 @@
   <div class="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth">
    
     <section class="h-screen w-full flex flex-col items-center justify-center snap-start bg-moxin-paper relative">
-       <MoxinVFX :density="70" class="absolute inset-0 z-10 vfx-mask"/>
+      <component 
+       :is="currentVfx" 
+       :density="currentDensity" 
+       class="absolute inset-0 z-10 vfx-mask"
+     />
        <!-- <div class="z-20 mb-8 w-full max-w-xl overflow-x-auto no-scrollbar px-4 flex space-x-6 items-center border-b border-moxin-shazhu/10 pb-4">
         <div 
           v-for="dateItem in dateRange" 
@@ -35,9 +39,11 @@
         素纸一张，写尽心城
       </p>
 
-      <!-- <div class="absolute bottom-10 animate-bounce opacity-20">
-        <span class="text-2xl">↓</span>
-      </div> -->
+      <!-- 改进的向下滑动提示 -->
+      <div class="absolute bottom-10 flex flex-col items-center gap-2">
+        <span class="text-3xl animate-bounce opacity-60 drop-shadow-lg text-moxin-shazhu">↓</span>
+        <p class="text-xs opacity-50 tracking-wider text-moxin-ink animate-pulse-glow font-light">向下滑动</p>
+      </div>
     </section>
 
     <section 
@@ -74,12 +80,38 @@
 <script setup>
 import { ref, onMounted, computed,onUnmounted } from 'vue';
 import { getDailySentence, getDailyHitokoto } from '../../utils/api/api';
-import SentenceCard from '../components/SentenceCard.vue';
-import HitokotoCard from '../components/HitokotoCard.vue';
-
+import SentenceCard from '@/components/SentenceCard.vue';
+import HitokotoCard from '@/components/HitokotoCard.vue';
+import { getCurrentSeason } from '../../utils/season';
+import SpringSakura from '@/components/SpringSakura.vue';
+// import SummerRain from './components/vfx/SummerRain.vue'; // 或者 Fireflies
+import AutumnMaple from '@/components/AutumnMaple.vue'; // 你的原代码
+// import WinterSnow from './components/vfx/WinterSnow.vue';
 // 💡 导入你放在 assets 里的贴图
 import tableBg from '../assets/seelean-iRJH2lSvo_E-unsplash.jpg';
-import MoxinVFX from '../components/MoxinVFX.vue'; // 引入特效组件
+const vfxMap = {
+  spring: SpringSakura,
+  // summer: SummerRain,
+  autumn: AutumnMaple,
+  // winter: WinterSnow
+};
+
+const currentVfx = computed(() => {
+  const season = getCurrentSeason();
+  return vfxMap[season] || AutumnMaple; // 默认回退到秋天
+});
+
+// 💡 4. (可选) 根据季节动态调整粒子密度
+const currentDensity = computed(() => {
+  const season = getCurrentSeason();
+  const densityConfig = {
+    spring: 50,  // 樱花可以稀疏点，显得优雅
+    summer: 40,  // 雨滴不用太多
+    autumn: 70,  // 枫叶维持原样
+    winter: 120  // 雪花密一点更有氛围
+  };
+  return densityConfig[season] || 70;
+});
 const loading = ref(true);
 const isLiked = ref(false);
 const dailySentence = ref({ content: '', author: '', source: '' });
@@ -182,5 +214,19 @@ onUnmounted(() => {
     0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 
     20% 30%, 80% 30%, 80% 70%, 20% 70%, 20% 30%
   );
+}
+
+/* 向下滑动提示动画 */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 </style>
