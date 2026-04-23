@@ -25,14 +25,14 @@ func main() {
 			fmt.Printf("--- 正在处理第 %d 批数据 ) ---\n", batch)
 
 			for _, p := range *tx.Statement.Dest.(*[]model.Poetry) {
-				// 步骤 1: 本地 RAG 检索 (E 盘 Qdrant)
+				//  本地 RAG 检索 (E 盘 Qdrant)
 				references := utils.SearchSimilarCorpus(p.Paragraphs)
 
-				// 步骤 2: 本地 AI 推理 (Ollama)
+				//  本地 AI 推理 (Ollama)
 				// 建议在执行前运行 $env:OLLAMA_MAX_VRAM=0 强制内存运行
 				aiRes := utils.GenerateWithRAG(p, references)
 
-				// 步骤 3: 回填并标记
+				// 回填并标记
 				p.Translation = "[AI补全] " + aiRes.Translation
 				p.Annotation = aiRes.Annotation
 				database.DB.Save(&p)

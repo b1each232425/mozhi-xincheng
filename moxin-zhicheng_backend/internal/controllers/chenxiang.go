@@ -6,7 +6,7 @@ import (
 	"moxin-zhicheng/internal/database"
 	model "moxin-zhicheng/internal/models"
 	"moxin-zhicheng/internal/redis"
-	"net/http"
+	"moxin-zhicheng/internal/response"
 	"strconv"
 	"time"
 
@@ -23,7 +23,7 @@ func GetStarTags(c *gin.Context) {
 	if err == nil {
 		var tags []string
 		if json.Unmarshal([]byte(val), &tags) == nil {
-			c.JSON(http.StatusOK, gin.H{"code": 200, "data": tags})
+			response.Success(c, tags)
 			return
 		}
 	}
@@ -54,14 +54,14 @@ func GetStarTags(c *gin.Context) {
 	data, _ := json.Marshal(selected)
 	redis.Set(ctx, DailyTagsKey, data, ttl)
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "data": selected})
+	response.Success(c, selected)
 }
 
 // SearchPoetry 综合搜索接口
 func SearchPoetry(c *gin.Context) {
 	keyword := c.Query("keyword")
 	if keyword == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "搜索关键词不能为空"})
+		response.BadRequest(c, "搜索关键词不能为空")
 		return
 	}
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -108,26 +108,23 @@ func SearchPoetry(c *gin.Context) {
 		err := query.Limit(pageSize).Offset(offset).Find(&poems).Error
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "搜索系统繁忙"})
+			response.ServerError(c, "搜索系统繁忙")
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{
-			"list":  poems,
-			"total": total,
-			"page":  page,
-			"size":  pageSize,
-		},
+	response.Success(c, gin.H{
+		"list":  poems,
+		"total": total,
+		"page":  page,
+		"size":  pageSize,
 	})
 }
 
 func SinglePoem(c *gin.Context) {
 	poem_id := c.Param("id")
 	if poem_id == "" {
-		c.JSON(http.StatusOK, gin.H{"error": "查询诗歌ID不能为空"})
+		response.BadRequest(c, "查询诗歌ID不能为空")
 		return
 	}
 	db := database.DB
@@ -135,5 +132,5 @@ func SinglePoem(c *gin.Context) {
 	if err := db.Where("id = ?", poem_id).First(&poem).Error; err != nil {
 		fmt.Println("占位")
 	}
-	c.JSON(http.StatusOK, gin.H{"code": 200, "data": poem})
+	response.Success(c, poem)
 }

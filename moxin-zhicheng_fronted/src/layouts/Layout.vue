@@ -13,11 +13,12 @@
         <div class="flex items-center space-x-8 text-sm tracking-widest">
           <button @click="handleNavigate('/')" class="hover:text-moxin-shazhu transition-colors">落叶</button>
           <button @click="handleNavigate('/luobi')" class="hover:text-moxin-shazhu transition-colors">落笔</button>
-          <button @click="handleNavigate('/user')" class="group relative py-1">
+          <button @click="handleNavigate('/zhicheng')" class="group relative py-1">
             <span class="hover:text-moxin-shazhu transition-colors">纸城</span>
             <span class="absolute -top-1 -right-2 w-1 h-1 bg-moxin-shazhu rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
           </button>
           <button @click="handleNavigate('/chenxiang')" class="hover:text-moxin-shazhu transition-colors">沉香</button>
+          <button @click="handleNavigate('/qinge/beats')" class="hover:text-moxin-shazhu transition-colors">琴阁</button>
         </div>
       </div>
     </nav>

@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log/slog"
 	"moxin-zhicheng/internal/config"
 	"moxin-zhicheng/internal/database"
 	"moxin-zhicheng/internal/logger"
 	"moxin-zhicheng/internal/models"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -77,14 +77,14 @@ func main() {
 
 		// 4. 监控：如果识别失败（即没有匹配到任何关键字），打印警告
 		if pType == "unknown" {
-			logger.Warn("🚩 无法识别朝代的文件", slog.String("file", fileName))
+			logger.Warn("无法识别朝代的文件", slog.String("file", fileName))
 		}
 
 		logger.Info("正在导入", slog.String("file", fileName), slog.String("type", pType))
 		importFile(file, pType)
 	}
 
-	logger.Info("🎉 数据库灌顶完成！")
+	logger.Info("数据库填充完成！")
 }
 
 func importFile(filePath string, pType string) {
@@ -97,7 +97,7 @@ func importFile(filePath string, pType string) {
 		pType = "huajianji"
 	}
 
-	byteValue, err := ioutil.ReadFile(filePath)
+	byteValue, err := os.ReadFile(filePath)
 	if err != nil {
 		logger.Error("读取文件失败", err, slog.String("file", fileName))
 		stats.FailedFiles++

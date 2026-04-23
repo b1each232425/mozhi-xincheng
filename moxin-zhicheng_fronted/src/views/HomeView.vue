@@ -84,16 +84,16 @@ import SentenceCard from '@/components/SentenceCard.vue';
 import HitokotoCard from '@/components/HitokotoCard.vue';
 import { getCurrentSeason } from '../../utils/season';
 import SpringSakura from '@/components/SpringSakura.vue';
-// import SummerRain from './components/vfx/SummerRain.vue'; // 或者 Fireflies
-import AutumnMaple from '@/components/AutumnMaple.vue'; // 你的原代码
-// import WinterSnow from './components/vfx/WinterSnow.vue';
-// 💡 导入你放在 assets 里的贴图
+import SummerRain from '@/components/SummerRain.vue'; 
+import AutumnMaple from '@/components/AutumnMaple.vue'; 
+import WinterSnow from '@/components/WinterSnow.vue';
+
 import tableBg from '../assets/seelean-iRJH2lSvo_E-unsplash.jpg';
 const vfxMap = {
   spring: SpringSakura,
-  // summer: SummerRain,
+  summer: SummerRain,
   autumn: AutumnMaple,
-  // winter: WinterSnow
+  winter: WinterSnow
 };
 
 const currentVfx = computed(() => {

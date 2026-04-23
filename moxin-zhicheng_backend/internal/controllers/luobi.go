@@ -3,7 +3,7 @@ package controllers
 import (
 	"moxin-zhicheng/internal/database"
 	model "moxin-zhicheng/internal/models"
-	"net/http"
+	"moxin-zhicheng/internal/response"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -19,16 +19,22 @@ type ArticleReq struct {
 
 // CreateArticle 发表文章/日记
 func CreateArticle(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		response.Unauthorized(c, "未登录")
+		return
+	}
 	var ArcReq ArticleReq
 	if err := c.ShouldBindJSON(&ArcReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "参数错误"})
+		response.BadRequest(c, "参数错误")
 		return
 	}
 
 	article := model.Article{
-		Title:   ArcReq.Title,
-		Content: ArcReq.Content,
-		Summary: ArcReq.Summary,
+		Title:    ArcReq.Title,
+		Content:  ArcReq.Content,
+		Summary:  ArcReq.Summary,
+		AuthorID: userID.(uint),
 		// Season 字段在这里被“过滤”掉了，因为数据库模型里没有它
 	}
 
@@ -50,20 +56,25 @@ func CreateArticle(c *gin.Context) {
 
 	// 强制字数检查（安全防御）
 	if len(article.Content) > 30000 { // 字节长度，粗略对应1万汉字+HTML
-		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "内容过长，请控制在1万字内"})
+		response.BadRequest(c, "内容过长，请控制在1万字内")
 		return
 	}
 
 	if err := database.DB.Create(&article).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "保存失败"})
+		response.ServerError(c, "保存失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "data": article, "msg": "落笔成功"})
+	response.SuccessWithMsg(c, "落笔成功", article)
 }
 
-// GetArticleList 获取文章列表（高性能分页版）
+// GetArticleList 获取文章列表
 func GetArticleList(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		response.Unauthorized(c, "未登录")
+		return
+	}
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 	offset := (page - 1) * pageSize
@@ -79,18 +90,20 @@ func GetArticleList(c *gin.Context) {
 	query.Count(&total)
 
 	// 分页查询
-	err := query.Order("created_at DESC").Limit(pageSize).Offset(offset).Find(&articles).Error
+	err := query.Order("created_at DESC").
+		Where("AuthorID=?", userID).
+		Limit(pageSize).
+		Offset(offset).
+		Find(&articles).
+		Error
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "查询失败"})
+		response.ServerError(c, "查询失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{
-			"list":  articles,
-			"total": total,
-		},
+	response.Success(c, gin.H{
+		"list":  articles,
+		"total": total,
 	})
 }
 
@@ -101,12 +114,30 @@ func GetArticleDetail(c *gin.Context) {
 
 	// 详情页才加载 Content 字段
 	if err := database.DB.First(&article, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"code": 404, "msg": "文章已随风散去"})
+		response.NotFound(c, "文章已随风散去")
 		return
 	}
 
 	// 增加阅读量（异步增加更好，这里演示简单写法）
 	database.DB.Model(&article).UpdateColumn("view_count", article.ViewCount+1)
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "data": article})
+	response.Success(c, article)
+}
+
+func SwitchPublic(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		response.Unauthorized(c, "未登录")
+		return
+	}
+	id := c.Param("id")
+	var article model.Article
+	if err := database.DB.Where("id = ? AND author_id = ?", id, userID).First(&article).Error; err != nil {
+		response.NotFound(c, "文章不存在或无权限")
+		return
+	}
+
+	newStatus := article.IsPublic ^ 1
+	database.DB.Model(&article).UpdateColumn("is_public", newStatus)
+	response.SuccessWithMsg(c, "切换成功", gin.H{"is_public": newStatus})
 }

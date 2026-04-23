@@ -54,6 +54,28 @@ const routes = [
       },
     ],
   },
+  {
+    path:'/zhicheng',
+    component:Layout,
+    children:[
+      {
+        path:'',
+        name:'zhicheng',
+        component:()=>import('../views/zhicheng/ZhichengView.vue')
+      }
+    ]
+  },
+  {
+    path:'/qinge',
+    component:Layout,
+    children:[
+      {
+        path:'beats',
+        name:'qingebeats',
+        component:()=>import('../views/qinge/beats.vue')
+      }
+    ]
+  }
 ];
 
 const router = createRouter({

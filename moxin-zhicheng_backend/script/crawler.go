@@ -31,7 +31,7 @@ func main() {
 	config.InitConfig()
 	database.InitDB()
 
-	// 2. 获取待处理的数据（译文或注释为空的）
+	// 获取待处理的数据（译文或注释为空的）
 	var poetries []model.Poetry
 	database.DB.Where("translation is null OR annotation is null").Find(&poetries)
 
@@ -48,14 +48,14 @@ func main() {
 
 		fmt.Printf("\n[任务] 正在处理: 《%s》 - %s\n", searchKey, p.Author)
 
-		// 3. 调用爬虫获取原始 HTML
+		// 调用爬虫获取原始 HTML
 		data, err := ScrapeGushiwen(searchKey, p.Author)
 		if err != nil || (data.Translation == "" && data.Annotation == "") {
 			fmt.Printf("[跳过] 未找到匹配内容或请求失败: %v\n", err)
 			continue
 		}
 
-		// 4. 清洗数据并更新
+		// 清洗数据并更新
 		p.Translation = cleanHTML(data.Translation)
 		p.Annotation = cleanHTML(data.Annotation)
 
@@ -71,7 +71,7 @@ func main() {
 	}
 }
 
-// cleanHTML 专门负责把爬到的 HTML 片段转为干净的纯文本
+// cleanHTML 负责把爬到的 HTML 片段转为纯文本
 func cleanHTML(htmlContent string) string {
 	if htmlContent == "" {
 		return ""
@@ -91,7 +91,7 @@ func ScrapeGushiwen(title, author string) (*model.Poetry, error) {
 	extensions.RandomUserAgent(c)
 	result := &model.Poetry{Title: title, Author: author}
 
-	// 统一设置 Header
+	//设置 Header
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Cookie", "login=flase; ASP.NET_SessionId=cu2rqtgidsix0aeb002xpull; ticketStr=207168910%7cgQHh7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAydXpISVJZbGVkN2kxVkh6T2hGMWgAAgRrFstpAwQAjScA; Hm_lvt_9007fab6814e892d3020a64454da5a55=1774765935,1774851130,1774917227; HMACCOUNT=20480A7A91B404B9; codeyz=eb3e46bfb1d37024; wxopenid=oVc5H0sNPp-AR7TsWBdvnw2QwWjw; Hm_lpvt_9007fab6814e892d3020a64454da5a55=1774917355; gsw2017user=7795777%7c6A5471B38CFFFF27880E4F7E9679CF7A537e2a7a%7c2000%2f1%2f1%7c2000%2f1%2f1; userPlay=7795777%7C0%7C0%7C1%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0%7C0")
 		//r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")

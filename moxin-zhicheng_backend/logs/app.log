@@ -636,3 +636,5 @@
 {"time":"2026-03-29T18:59:13.0567834+08:00","level":"INFO","msg":"写入 Qdrant 失败 《九辩》: Upsert() failed: poetry_corpus: rpc error: code = InvalidArgument desc = Wrong input: Vector dimension error: expected dim: 1024, got 0"}
 {"time":"2026-03-29T18:59:13.2006413+08:00","level":"INFO","msg":"写入 Qdrant 失败 《招魂》: Upsert() failed: poetry_corpus: rpc error: code = InvalidArgument desc = Wrong input: Vector dimension error: expected dim: 1024, got 0"}
 {"time":"2026-03-29T18:59:14.9723795+08:00","level":"INFO","msg":"写入 Qdrant 失败 《哀时命》: Upsert() failed: poetry_corpus: rpc error: code = InvalidArgument desc = Wrong input: Vector dimension error: expected dim: 1024, got 0"}
+{"time":"2026-04-22T08:39:15.8723371+08:00","level":"INFO","source":{"function":"moxin-zhicheng/internal/logger.Info","file":"E:/moxin_zhicheng/moxin-zhicheng_backend/internal/logger/logger.go","line":45},"msg":"数据库初始化成功","db":"moxin-zhicheng"}
+{"time":"2026-04-22T08:40:33.7246286+08:00","level":"INFO","source":{"function":"moxin-zhicheng/internal/logger.Info","file":"E:/moxin_zhicheng/moxin-zhicheng_backend/internal/logger/logger.go","line":45},"msg":"数据库初始化成功","db":"moxin-zhicheng"}
