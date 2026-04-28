@@ -1,0 +1,13 @@
+# 视觉核心
+opencv-python==4.8.1.78
+mediapipe==0.10.7
+numpy==1.26.0
+
+# 通信核心 (降级到支持 Protobuf 3 的最后一个大版本)
+grpcio==1.48.2
+grpcio-tools==1.48.2
+protobuf==3.20.3
+
+# 调试工具
+matplotlib==3.8.0
+Pillow==10.0.1

@@ -1,0 +1,16 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+kpt_shape: [4, 3]
+flip_idx: [1, 0, 3, 2]
+
+nc: 1
+names: ['Guitar_Fretboard_Pose']
+
+roboflow:
+  workspace: weixuans-workspace
+  project: guitar_fretboard_pose
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/weixuans-workspace/guitar_fretboard_pose/dataset/3
